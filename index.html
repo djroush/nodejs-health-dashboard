@@ -1,0 +1,66 @@
+<html>
+  <head>
+    <link rel="stylesheet" type="text/css" href="dashboard.css">
+    <script src="jquery-3.2.1.js"></script>
+    <script>
+       var startTime; 
+
+       var urls = [
+         "https://www.google.com/",
+         "https://www.youtube.com/",
+         "https://www.cnn.com/",
+         "https://www.time.gov/",
+         "https://nodejs.org/"
+       ];
+
+       function  ready() {
+          for (var i = 0; i < urls.length; i++) {
+            setupTable(urls[i], i);
+          }
+          checkHealth();
+          setInterval(function(){ 
+            checkHealth();
+           }, 10000);
+       };
+       function checkHealth() {
+          startTime = new Date().getTime();
+          var hostname = window.location.href;
+          for (var i = 0; i < urls.length; i++) {
+            var url = hostname + "proxy?url=" + encodeURIComponent(urls[i]);
+            var sendXhr = function(j) {
+              $.ajax(url, {
+                type: "get", async: true
+              }).done(function(statusMessage, statusCode) { 
+                handleDone(statusMessage, j);
+              }).fail(function() {
+                handleDone("ERROR", j);
+              })
+            }
+            sendXhr(i);
+          };
+       };
+
+       function handleDone(result, i) {
+           var duration = new Date().getTime() - startTime;
+           var time = 'tr#' + i + ' .time';
+           var status= 'tr#' + i + ' .status div';
+           $(time).text('' + duration);
+           if (result == "OK") {
+             $(status).css('background-color', 'green');
+           } else {
+             $(status).css('background-color', 'red');
+           }
+       };
+
+       function setupTable(url, i) {
+          $('table#output').append('<tr id=' + i + '><td class="url"><a href="' + url + '">' + url + '</a></td><td class="time"></td><td class="status"><div/></td></tr>');
+       };
+    </script> 
+  </head>
+  <body style="display: block" onload="ready()">
+    <h1 id="header">NodeJS monitoring dashboard</h1>
+    <table id="output">
+      <tr><th>URL</th><th>Time (ms)</th><th>Status</th></tr>
+    </table>
+  </body>
+</html>

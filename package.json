@@ -1,0 +1,12 @@
+{
+  "name": "healthcheck-dashboard",
+  "private": true,
+  "version": "0.0.1",
+  "description": "A simple node js dashboard",
+  "author": "Doug Roush",
+  "main": "backend.js",
+  "devDependencies": {
+    "express": "latest",
+    "request": "latest"
+  }
+}
